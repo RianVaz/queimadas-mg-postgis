@@ -1,3 +1,4 @@
+\encoding UTF8
 -- =====================================================================
 -- schema.sql - Base "Queimadas MG" (focos de calor e unidades de conservação)
 -- RGINT de Ipatinga (MG), 2024-2025 | SRID 4674 (SIRGAS 2000)

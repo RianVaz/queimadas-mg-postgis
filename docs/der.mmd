@@ -1,0 +1,43 @@
+erDiagram
+    MUNICIPIO ||--o{ FOCO_CALOR : "cod_ibge"
+    UNIDADE_CONSERVACAO |o--o{ FOCO_CALOR : "id_uc (opcional)"
+    CATEGORIA_UC ||--o{ UNIDADE_CONSERVACAO : "cod_categoria"
+
+    MUNICIPIO {
+        integer cod_ibge PK
+        varchar nome
+        char uf
+        char cod_rgi
+        varchar nome_rgi
+        numeric area_km2
+        geometry geom "MultiPolygon 4674"
+    }
+    CATEGORIA_UC {
+        smallint cod_categoria PK
+        varchar descricao UK
+        varchar grupo
+    }
+    UNIDADE_CONSERVACAO {
+        integer id_uc PK
+        varchar cod_cnuc UK
+        varchar nome
+        smallint cod_categoria FK
+        varchar esfera
+        date data_cadastro
+        varchar ato_criacao
+        numeric area_ha_ato
+        numeric area_ha_poligono
+        varchar qualidade_poligono
+        varchar plano_manejo
+        geometry geom "MultiPolygon 4674"
+    }
+    FOCO_CALOR {
+        integer id_foco PK
+        varchar foco_id_inpe UK
+        timestamp data_hora_gmt
+        varchar bioma
+        integer cod_ibge FK
+        integer id_uc FK
+        varchar municipio_inpe
+        geometry geom "Point 4674"
+    }

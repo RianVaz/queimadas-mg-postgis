@@ -1,0 +1,72 @@
+Base de dados geográficos "Queimadas MG"
+Disciplina CSI803 - Banco de Dados Geográficos - UFOP, Campus João Monlevade
+
+Este repositório combina duas licenças, de acordo com o tipo de conteúdo.
+
+
+=====================================================================
+1. CÓDIGO (licença MIT)
+=====================================================================
+
+Aplica-se a: scripts/ (Python), sql/ (schema.sql, dados.sql,
+consultas.sql) e demais arquivos de código.
+
+MIT License
+
+Copyright (c) 2026 Rian Vaz Mauricio, Vitor de Souza Leite, Gustavo Dias Miranda, Vitor Gomes Ferreira
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+=====================================================================
+2. DADOS E DOCUMENTAÇÃO (Creative Commons Atribuição 4.0 - CC BY 4.0)
+=====================================================================
+
+Aplica-se a: dados/tratados/, DICIONARIO.md, README.md, docs/ e demais
+dados derivados e textos de documentação.
+
+Texto da licença: https://creativecommons.org/licenses/by/4.0/legalcode.pt
+Resumo:           https://creativecommons.org/licenses/by/4.0/deed.pt-br
+
+Você pode copiar, redistribuir, adaptar e usar os dados, inclusive para fins
+comerciais, desde que dê o crédito apropriado, indique se foram feitas
+alterações e cite as fontes originais listadas abaixo.
+
+Os dados são derivados das seguintes fontes públicas, coletadas em 21/11/2026.
+Os arquivos originais, sem alteração, estão em dados/brutos/ e os detalhes
+em dados/brutos/FONTES.md.
+
+  - Limites municipais: IBGE - Malha Municipal 2025 (Minas Gerais).
+    https://geoftp.ibge.gov.br/organizacao_do_territorio/malhas_territoriais/malhas_municipais/municipio_2025/UFs/MG/
+    Dados abertos; atribuição ao IBGE.
+
+  - Unidades de conservação: MMA - Cadastro Nacional de Unidades de
+    Conservação (CNUC), versão 2025_08.
+    https://dados.mma.gov.br/dataset/unidadesdeconservacao
+    Licença: CC BY.
+
+  - Focos de calor: INPE - Programa Queimadas, satélite de referência,
+    arquivos anuais de 2024 e 2025.
+    https://dataserver-coids.inpe.br/queimadas/queimadas/focos/csv/anual/Brasil_sat_ref/
+    Dados abertos; atribuição ao INPE.
+
+Os dados tratados foram recortados (Região Geográfica Intermediária de
+Ipatinga), reprojetados e padronizados conforme descrito no DICIONARIO.md.
+As fontes originais mantêm seus próprios termos de uso, que continuam
+valendo para os dados de origem.
