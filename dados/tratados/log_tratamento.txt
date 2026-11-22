@@ -1,0 +1,52 @@
+======================================================================
+1. MUNICÍPIOS
+======================================================================
+  Lidos: 853 municípios de MG (SRC EPSG:4674)
+  Filtro CD_RGINT = '3105': 44 municípios
+  municipio: 0 geometria(s) inválida(s) corrigida(s) com make_valid
+  municipio: 44 registros, MultiPolygon, SRID 4674, todas as geometrias válidas, não vazias e não nulas
+
+======================================================================
+2. UNIDADES DE CONSERVAÇÃO
+======================================================================
+  Lidas: 3122 UCs do Brasil (SRC EPSG:4674)
+  unidade_conservacao (Brasil): 1 geometria(s) inválida(s) corrigida(s) com make_valid
+  UCs que interceptam a região: 15
+    excluída: 3170.31.3170 ÁREA DE PROTEÇÃO AMBIENTAL SANTO ANTÔNIO (0.2% na região)
+    excluída: 3170.31.3168 ÁREA DE PROTEÇÃO AMBIENTAL PIRACICABA (1.0% na região)
+  Mantidas (>= 50% da área na região): 13
+  Categorias encontradas: 4
+    1 = Parque (PROTECAO_INTEGRAL)
+    2 = Floresta (USO_SUSTENTAVEL)
+    3 = Reserva Particular do Patrimônio Natural (USO_SUSTENTAVEL)
+    4 = Área de Proteção Ambiental (USO_SUSTENTAVEL)
+  data_cadastro não convertida (ficou nula): 0
+  Esferas: ['ESTADUAL', 'FEDERAL', 'MUNICIPAL']
+  Plano de manejo: ['NAO', 'SEM_INFORMACAO', 'SIM']
+  unidade_conservacao: 13 registros, MultiPolygon, SRID 4674, todas as geometrias válidas, não vazias e não nulas
+
+======================================================================
+3. FOCOS DE CALOR
+======================================================================
+  Lidos: 414692 focos do Brasil (2024 + 2025)
+  Removidos por falta de coordenada: 0
+  Reprojetados de EPSG:4326 para EPSG:4674
+  Dentro da região: 624
+  Removidos por data fora de 2024–2025: 0
+  Removidos por foco_id repetido: 0
+  Município do INPE diferente do obtido por ST_Within: 0
+  Focos dentro de alguma UC: 27
+  Focos em duas ou mais UCs sobrepostas (atribuída a menor): 0
+  Focos por ano: 2024 = 454, 2025 = 170
+  Biomas: ['Mata Atlântica']
+  foco_calor: 624 registros, Point, SRID 4674, todas as geometrias válidas, não vazias e não nulas
+
+======================================================================
+4. ARQUIVOS GRAVADOS
+======================================================================
+  dados/tratados/municipio.csv (44 linhas, 2.2 MB)
+  dados/tratados/categoria_uc.csv (4 linhas)
+  dados/tratados/unidade_conservacao.csv (13 linhas, 0.2 MB)
+  dados/tratados/foco_calor.csv (624 linhas, 0.1 MB)
+
+TOTAL DE FEIÇÕES: 44 municípios + 13 UCs + 624 focos = 681

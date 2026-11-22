@@ -17,7 +17,7 @@
 | **Cobertura temporal** | Focos de 01/01/2024 a 31/12/2025. Malha municipal de 2025. UCs com registro ativo em agosto de 2025. |
 | **SRID e justificativa** | **EPSG:4674 (SIRGAS 2000).** É o datum oficial do Brasil e o mesmo da malha do IBGE e do CNUC, o que evita reprojetar os polígonos. Apenas os focos, fornecidos em EPSG:4326 (WGS 84), foram reprojetados; a diferença entre os dois sistemas é inferior a 1 metro. Como as coordenadas estão em graus, medidas em metros nas consultas usam o tipo `geography` ou reprojetam para EPSG:31983 (SIRGAS 2000 / UTM 23S). |
 | **Escala e precisão** | Malha municipal do IBGE em escala de referência 1:250.000. Focos de calor do satélite de referência com imprecisão de localização da ordem de 1 km (tamanho do pixel do sensor). Polígonos das UCs com qualidade variável, indicada na coluna `qualidade_poligono`; 4 das 13 UCs têm polígono que é uma estimativa dos limites. |
-| **Tratamentos aplicados** | _A preencher com os números finais após o tratamento._ Planejados: 1. Seleção dos municípios com `CD_RGINT = '3105'`. 2. Seleção das UCs que interceptam a região e manutenção das que têm ≥ 50% da área dentro dela (área calculada em EPSG:31983). 3. Leitura do CNUC em latin1 com reconversão para UTF-8, por causa de textos truncados no meio de caracteres. 4. Junção dos focos de 2024 e 2025 e seleção dos que estão dentro da região. 5. Reprojeção dos focos de EPSG:4326 para EPSG:4674. 6. Conversão dos polígonos para MultiPolygon e correção com `make_valid` / `ST_MakeValid`. 7. Padronização dos nomes de colunas (snake_case, sem acentos) e do texto (UTF-8). 8. Atribuição de `cod_ibge` e `id_uc` a cada foco por `ST_Within`. |
+| **Tratamentos aplicados** | Executados por `scripts/tratamento.py`; contagens completas em `dados/tratados/log_tratamento.txt`. 1. Seleção dos municípios com `CD_RGINT = '3105'` (44 de 853). 2. Leitura do CNUC em latin1 com reconversão para UTF-8, por causa de textos truncados no meio de caracteres. 3. Correção de 1 geometria inválida do CNUC com `make_valid` (nenhuma inválida nos municípios). 4. Seleção das 15 UCs que interceptam a região e manutenção das 13 com ≥ 50% da área dentro dela (área calculada em EPSG:31983). 5. Conversão de todos os polígonos para MultiPolygon. 6. Junção dos focos de 2024 e 2025 (414.692 no Brasil) e seleção dos 624 que estão dentro da região; nenhum foco removido por falta de coordenada, data fora do período ou identificador repetido. 7. Reprojeção dos focos de EPSG:4326 para EPSG:4674. 8. Padronização dos nomes de colunas (snake_case, sem acentos), do texto (UTF-8, sem espaços extras) e dos códigos de domínio (ex.: `ESTADUAL`, `SEM_INFORMACAO`). 9. Conversão de `cria_ano` (DD-MM-AAAA) para data. 10. Atribuição de `cod_ibge` (município) e `id_uc` (UC) a cada foco por relação espacial; 27 focos ficaram dentro de UCs. Regra prevista para um foco em UCs sobrepostas: atribuir a UC de menor área (não houve nenhum caso). |
  
 ## 2. Descrição das tabelas
  
@@ -37,7 +37,7 @@ Limites dos municípios da RGINT de Ipatinga. **Geometria:** MultiPolygon · **S
  
 ### Tabela `categoria_uc` (tabela de domínio)
  
-Categorias de unidade de conservação presentes na base e o grupo a que pertencem, conforme o SNUC (Lei 9.985/2000). Sem geometria · **Registros:** _a preencher_.
+Categorias de unidade de conservação presentes na base e o grupo a que pertencem, conforme o SNUC (Lei 9.985/2000). Sem geometria · **Registros:** 4.
  
 | Coluna | Tipo | Tam. / Domínio | Nulo? | PK / FK | Descrição | Exemplo |
 |---|---|---|---|---|---|---|
@@ -71,12 +71,12 @@ Focos de calor do satélite de referência do INPE dentro da região, em 2024 e 
 | Coluna | Tipo | Tam. / Domínio | Nulo? | PK / FK | Descrição | Exemplo |
 |---|---|---|---|---|---|---|
 | `id_foco` | serial | gerado | Não | PK | Identificador interno do foco. | 1 |
-| `foco_id_inpe` | varchar | único | Não | | Identificador do foco no INPE (`foco_id`). | _a preencher_ |
+| `foco_id_inpe` | varchar | 36 · único (UUID) | Não | | Identificador do foco no INPE (`foco_id`). | 3568cae4-0e2a-3cf7-afbf-6b656275a0e7 |
 | `data_hora_gmt` | timestamp | AAAA-MM-DD HH:MM:SS | Não | | Data e hora da passagem do satélite, em GMT (`data_pas`). | _a preencher_ |
 | `bioma` | varchar | ver seção 4 | Sim | | Bioma onde o foco foi detectado, segundo o INPE (`bioma`). | Mata Atlântica |
 | `cod_ibge` | integer | 7 dígitos | Não | FK | Município onde o foco está, obtido por `ST_Within`. Referencia `municipio.cod_ibge`. | 3136207 |
 | `id_uc` | integer | — | Sim | FK | UC onde o foco está, obtida por `ST_Within`; nulo quando o foco está fora de UC. Referencia `unidade_conservacao.id_uc`. | _a preencher_ |
-| `municipio_inpe` | varchar | 100 | Sim | | Nome do município informado pelo INPE, mantido para comparação com `cod_ibge`. | _a preencher_ |
+| `municipio_inpe` | varchar | 100 | Sim | | Nome do município informado pelo INPE, mantido para comparação com `cod_ibge`. | PINGO D'ÁGUA |
 | `geom` | geometry | Point, 4674 | Não | | Localização do foco. | POINT(-43.17 -19.81) |
  
 ## 3. Relacionamentos
@@ -95,10 +95,10 @@ Focos de calor do satélite de referência do INPE dentro da região, em 2024 e 
  
 | Coluna | Valor | Significado |
 |---|---|---|
-| `categoria_uc.descricao` | Parque | Parque (nacional, estadual ou natural municipal) |
-| | Área de Proteção Ambiental | Área de Proteção Ambiental (APA) |
-| | Reserva Particular do Patrimônio Natural | RPPN |
-| | Floresta | Floresta (nacional, estadual ou municipal) |
+| `categoria_uc.cod_categoria` / `descricao` | 1 – Parque | Parque (estadual ou natural municipal) · PROTECAO_INTEGRAL |
+| | 2 – Floresta | Floresta municipal · USO_SUSTENTAVEL |
+| | 3 – Reserva Particular do Patrimônio Natural | RPPN · USO_SUSTENTAVEL |
+| | 4 – Área de Proteção Ambiental | APA · USO_SUSTENTAVEL |
 | `categoria_uc.grupo` | PROTECAO_INTEGRAL | Admite apenas uso indireto dos recursos naturais (ex.: Parque) |
 | | USO_SUSTENTAVEL | Admite uso sustentável de parte dos recursos (ex.: APA, RPPN, Floresta) |
 | `unidade_conservacao.esfera` | FEDERAL | UC gerida pela União (ex.: RPPNs reconhecidas pelo ICMBio) |
@@ -106,7 +106,7 @@ Focos de calor do satélite de referência do INPE dentro da região, em 2024 e 
 | | MUNICIPAL | UC gerida pelo município |
 | `unidade_conservacao.plano_manejo` | SIM / NAO / SEM_INFORMACAO | Existência de plano de manejo, segundo o CNUC |
 | `municipio.uf` | Siglas de UF | Nesta base, sempre MG |
-| `foco_calor.bioma` | _a preencher_ | Valores encontrados nos dados da região |
+| `foco_calor.bioma` | Mata Atlântica | Único valor presente na região (bioma informado pelo INPE) |
  
 Os códigos de `cod_categoria` são internos a esta base e não equivalem a códigos do CNUC.
  
@@ -122,5 +122,7 @@ Os códigos de `cod_categoria` são internos a esta base e não equivalem a cód
 - **Textos truncados:** o shapefile do CNUC limita campos de texto a 254 bytes, e alguns textos foram cortados no meio de um caractere acentuado. O byte incompleto foi descartado; textos longos podem estar incompletos na origem. Há também caracteres trocados por "?" em alguns textos da fonte.
 - **Erros de digitação da fonte:** a UC `5702.31.4752` se chama "ÁREA DE PRESERVAÇÃO AMBIENTAL RIO PIRACICABA", embora a categoria seja Área de Proteção Ambiental; o nome foi mantido como na fonte.
 - **Temporalidade:** retrato das UCs em agosto de 2025 e dos focos de 2024–2025.
-- _A preencher após o tratamento: divergências entre o município do INPE e o obtido por `ST_Within`; geometrias corrigidas com `make_valid`._
+- **Município do INPE × município por posição:** os 624 focos caem no mesmo município indicado pelo INPE. As únicas 6 diferenças encontradas são de grafia (INPE: "PINGO D'ÁGUA"; IBGE: "Pingo-d'Água"), não de localização.
+- **Bioma:** todos os focos da região estão na Mata Atlântica, então a coluna `bioma` tem um único valor nesta base.
+- **Focos em UCs:** apenas 27 dos 624 focos (cerca de 4%) estão dentro de UCs, e o número depende da precisão de ~1 km dos focos e da qualidade dos polígonos.
  
