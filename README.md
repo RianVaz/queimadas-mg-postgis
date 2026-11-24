@@ -84,6 +84,11 @@ comando `\copy` do `psql`. Os caminhos dos CSVs em `sql/dados.sql` são relativo
 **todos os comandos devem ser executados na pasta raiz do repositório** (a pasta que contém
 este `README.md`).
 
+> **Testado em banco limpo** em 23/11/2026: repositório clonado em uma pasta nova e banco
+> criado do zero, seguindo apenas os passos abaixo (Windows x86_64, PostgreSQL 18.4,
+> PostGIS 3.7.0). Os três scripts rodaram sem erros e todas as conferências do
+> `consultas.sql` deram o resultado esperado.
+
 ### 1. Baixar o repositório
 
 ```bash
