@@ -1,9 +1,5 @@
 # Dicionário de dados – Focos de calor e unidades de conservação na RGINT de Ipatinga (MG)
  
-> **Rascunho.** Estrutura das tabelas definida com base na coleta. Tipos, contagens finais
-> e exemplos serão confirmados após o tratamento e a carga no PostGIS. Os campos marcados
-> com _a preencher_ dependem dessas etapas.
- 
 ## 1. Visão geral da base
  
 | Item | Descrição |
@@ -32,7 +28,7 @@ Limites dos municípios da RGINT de Ipatinga. **Geometria:** MultiPolygon · **S
 | `uf` | char | 2 · siglas de UF | Não | | Sigla da unidade da federação (`SIGLA_UF`). | MG |
 | `cod_rgi` | char | 6 dígitos | Não | | Código da Região Geográfica Imediata (`CD_RGI`). | 310026 |
 | `nome_rgi` | varchar | 100 | Não | | Nome da Região Geográfica Imediata (`NM_RGI`). | João Monlevade |
-| `area_km2` | numeric | (12,3) · ≥ 0 | Não | | Área territorial em km², conforme a malha do IBGE (`AREA_KM2`). | _a preencher_ |
+| `area_km2` | numeric | (12,3) · ≥ 0 | Não | | Área territorial em km², conforme a malha do IBGE (`AREA_KM2`). | 98.231 |
 | `geom` | geometry | MultiPolygon, 4674 | Não | | Limite municipal. | (geometria) |
  
 ### Tabela `categoria_uc` (tabela de domínio)
@@ -42,7 +38,7 @@ Categorias de unidade de conservação presentes na base e o grupo a que pertenc
 | Coluna | Tipo | Tam. / Domínio | Nulo? | PK / FK | Descrição | Exemplo |
 |---|---|---|---|---|---|---|
 | `cod_categoria` | smallint | ver seção 4 | Não | PK | Código da categoria (interno desta base). | 1 |
-| `descricao` | varchar | 60 | Não | | Nome da categoria, como no CNUC. | Parque |
+| `descricao` | varchar | 60 · único | Não | | Nome da categoria, como no CNUC. | Parque |
 | `grupo` | varchar | ver seção 4 | Não | | Grupo do SNUC a que a categoria pertence. | PROTECAO_INTEGRAL |
  
 ### Tabela `unidade_conservacao`
@@ -51,17 +47,17 @@ Unidades de conservação do CNUC com pelo menos 50% da área dentro da região.
  
 | Coluna | Tipo | Tam. / Domínio | Nulo? | PK / FK | Descrição | Exemplo |
 |---|---|---|---|---|---|---|
-| `id_uc` | integer | — | Não | PK | Identificador da UC no CNUC (`uc_id`). | 3028 |
+| `id_uc` | integer | — | Não | PK | Identificador da UC no CNUC (`uc_id`). | 23245 |
 | `cod_cnuc` | varchar | 12 · único | Não | | Código da UC no CNUC (`cd_cnuc`). | 0000.31.0394 |
 | `nome` | varchar | 150 | Não | | Nome da UC (`nome_uc`). | PARQUE ESTADUAL DO RIO DOCE |
 | `cod_categoria` | smallint | ver `categoria_uc` | Não | FK | Categoria da UC. Referencia `categoria_uc.cod_categoria`. | 1 |
 | `esfera` | varchar | ver seção 4 | Não | | Esfera administrativa responsável (`esfera`). | ESTADUAL |
-| `data_cadastro` | date | AAAA-MM-DD | Sim | | Data informada em `cria_ano` no CNUC. Ver limitações (seção 5). | 1998-12-18 |
-| `ato_criacao` | varchar | 254 | Sim | | Ato legal de criação (`cria_ato`). | Decreto 40168 de 17-12-1998 |
-| `area_ha_ato` | numeric | (12,2) · ≥ 0 | Sim | | Área em hectares segundo o ato legal (`ha_ato`). | 5065.00 |
-| `area_ha_poligono` | numeric | (12,2) · ≥ 0 | Sim | | Área do polígono em hectares, segundo o CNUC (`ha_total`). | 5174.70 |
-| `qualidade_poligono` | varchar | 100 | Sim | | Qualidade do polígono declarada no CNUC (`quali_pol`). | Polígono corresponde ao memorial descritivo |
-| `plano_manejo` | varchar | ver seção 4 | Sim | | Indica se a UC tem plano de manejo (`pl_manejo`). | SEM_INFORMACAO |
+| `data_cadastro` | date | AAAA-MM-DD | Sim | | Data informada em `cria_ano` no CNUC. Ver limitações (seção 5). | 1944-07-15 |
+| `ato_criacao` | varchar | 254 | Sim | | Ato legal de criação (`cria_ato`). | Decreto 1119 de 14-07-1944 |
+| `area_ha_ato` | numeric | (12,2) · ≥ 0 | Sim | | Área em hectares segundo o ato legal (`ha_ato`). | 35976.00 |
+| `area_ha_poligono` | numeric | (12,2) · ≥ 0 | Sim | | Área do polígono em hectares, segundo o CNUC (`ha_total`). | 36030.25 |
+| `qualidade_poligono` | varchar | 254 | Sim | | Qualidade do polígono declarada no CNUC (`quali_pol`). | Polígono corresponde ao memorial descritivo |
+| `plano_manejo` | varchar | ver seção 4 | Sim | | Indica se a UC tem plano de manejo (`pl_manejo`). | SIM |
 | `geom` | geometry | MultiPolygon, 4674 | Não | | Limite da UC (completo, sem recorte pela região). | (geometria) |
  
 ### Tabela `foco_calor`
@@ -70,14 +66,14 @@ Focos de calor do satélite de referência do INPE dentro da região, em 2024 e 
  
 | Coluna | Tipo | Tam. / Domínio | Nulo? | PK / FK | Descrição | Exemplo |
 |---|---|---|---|---|---|---|
-| `id_foco` | serial | gerado | Não | PK | Identificador interno do foco. | 1 |
-| `foco_id_inpe` | varchar | 36 · único (UUID) | Não | | Identificador do foco no INPE (`foco_id`). | 3568cae4-0e2a-3cf7-afbf-6b656275a0e7 |
-| `data_hora_gmt` | timestamp | AAAA-MM-DD HH:MM:SS | Não | | Data e hora da passagem do satélite, em GMT (`data_pas`). | _a preencher_ |
+| `id_foco` | integer | identidade, gerado pelo banco (não está no CSV) | Não | PK | Identificador interno do foco (`GENERATED ALWAYS AS IDENTITY`). | 1 |
+| `foco_id_inpe` | varchar | 36 · único (UUID) | Não | | Identificador do foco no INPE (`foco_id`). | 217188ae-748b-3f73-a250-0966f9b23e7c |
+| `data_hora_gmt` | timestamp | AAAA-MM-DD HH:MM:SS | Não | | Data e hora da passagem do satélite, em GMT (`data_pas`). | 2024-07-26 17:05:00 |
 | `bioma` | varchar | ver seção 4 | Sim | | Bioma onde o foco foi detectado, segundo o INPE (`bioma`). | Mata Atlântica |
-| `cod_ibge` | integer | 7 dígitos | Não | FK | Município onde o foco está, obtido por `ST_Within`. Referencia `municipio.cod_ibge`. | 3136207 |
-| `id_uc` | integer | — | Sim | FK | UC onde o foco está, obtida por `ST_Within`; nulo quando o foco está fora de UC. Referencia `unidade_conservacao.id_uc`. | _a preencher_ |
-| `municipio_inpe` | varchar | 100 | Sim | | Nome do município informado pelo INPE, mantido para comparação com `cod_ibge`. | PINGO D'ÁGUA |
-| `geom` | geometry | Point, 4674 | Não | | Localização do foco. | POINT(-43.17 -19.81) |
+| `cod_ibge` | integer | 7 dígitos | Não | FK | Município onde o foco está, obtido por `ST_Within`. Referencia `municipio.cod_ibge`. | 3168705 |
+| `id_uc` | integer | — | Sim | FK | UC onde o foco está, obtida por `ST_Within`; nulo quando o foco está fora de UC. Referencia `unidade_conservacao.id_uc`. | 2806 |
+| `municipio_inpe` | varchar | 100 | Sim | | Nome do município informado pelo INPE, mantido para comparação com `cod_ibge`. | TIMÓTEO |
+| `geom` | geometry | Point, 4674 | Não | | Localização do foco. | POINT(-42.60672 -19.58808) |
  
 ## 3. Relacionamentos
  
